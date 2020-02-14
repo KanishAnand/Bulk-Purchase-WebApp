@@ -1,5 +1,8 @@
 import React, { Component } from "react";
+import { Redirect } from "react-router";
 import { Link } from "react-router-dom";
+import axios from "axios";
+
 class Login extends Component {
 	constructor() {
 		super();
@@ -19,7 +22,20 @@ class Login extends Component {
 			password: this.state.password
 		};
 		console.log(userData);
+		axios
+			.post("users/login", userData)
+			.then(function(res) {
+				window.location = "/register";
+			})
+			.catch(res => console.log("Login Failed"));
 	};
+	// .then(function (response) {
+	// 	if (response.data.redirect == '/') {
+	// 		window.location = "/index"
+	// 	} else if (response.data.redirect == '/login'){
+	// 		window.location = "/login"
+	// 	}
+	// })
 	render() {
 		const { errors } = this.state;
 		return (
