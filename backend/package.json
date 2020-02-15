@@ -17,6 +17,7 @@
     "is-empty": "^1.2.0",
     "jade": "~1.11.0",
     "jsonwebtoken": "^8.5.1",
+    "local-storage": "^2.0.0",
     "mongoose": "^5.8.12",
     "morgan": "~1.9.1",
     "passport": "^0.4.1",

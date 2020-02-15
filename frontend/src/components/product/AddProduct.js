@@ -1,14 +1,16 @@
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 import ls from "local-storage";
 
-class Login extends Component {
+class AddProduct extends Component {
 	constructor() {
 		super();
 		this.state = {
-			email: "",
-			password: "",
+			name: "",
+			price: "",
+			quantity: "",
+			vendormail: "",
 			errors: {}
 		};
 	}
@@ -17,31 +19,28 @@ class Login extends Component {
 	};
 	onSubmit = e => {
 		e.preventDefault();
-		const userData = {
-			email: this.state.email,
-			password: this.state.password
+		const newProduct = {
+			name: this.state.name,
+			price: this.state.price,
+			quantity: this.state.quantity,
+			vendormail: ls.get("email")
 		};
-		console.log(userData);
+		console.log(newProduct);
 		axios
-			.post("users/login", userData)
+			.post("product/create", newProduct)
 			.then(function(res) {
-				ls.set("auth", "true");
-				console.log(res.data.user.name);
-				ls.set("username", res.data.user.name);
-				ls.set("email", res.data.user.email);
-				ls.set("usertype", res.data.user.usertype);
-				window.location = "/";
+				alert("Product Added Successfully");
+				window.location.reload();
 			})
 			.catch(function(res) {
 				alert(res.response.data[Object.keys(res.response.data)[0]]);
 			});
 	};
-
 	render() {
 		const { errors } = this.state;
 		return (
 			<div className="container">
-				<div style={{ marginTop: "4rem" }} className="row">
+				<div className="row">
 					<div className="col s8 offset-s2">
 						<Link to="/" className="btn-flat waves-effect">
 							<i className="material-icons left">
@@ -54,33 +53,39 @@ class Login extends Component {
 							style={{ paddingLeft: "11.250px" }}
 						>
 							<h4>
-								<b>Login</b> below
+								<b>Add Product</b>
 							</h4>
-							<p className="grey-text text-darken-1">
-								Don't have an account?{" "}
-								<Link to="/register">Register</Link>
-							</p>
 						</div>
 						<form noValidate onSubmit={this.onSubmit}>
 							<div className="input-field col s12">
 								<input
 									onChange={this.onChange}
-									value={this.state.email}
-									error={errors.email}
-									id="email"
-									type="email"
+									value={this.state.name}
+									error={errors.name}
+									id="name"
+									type="text"
 								/>
-								<label htmlFor="email">Email</label>
+								<label htmlFor="name">Product Name</label>
 							</div>
 							<div className="input-field col s12">
 								<input
 									onChange={this.onChange}
-									value={this.state.password}
-									error={errors.password}
-									id="password"
-									type="password"
+									value={this.state.price}
+									error={errors.price}
+									id="price"
+									type="text"
 								/>
-								<label htmlFor="password">Password</label>
+								<label htmlFor="price">Price</label>
+							</div>
+							<div className="input-field col s12">
+								<input
+									onChange={this.onChange}
+									value={this.state.quantity}
+									error={errors.quantity}
+									id="quantity"
+									type="text"
+								/>
+								<label htmlFor="quantity">Quantity</label>
 							</div>
 							<div
 								className="col s12"
@@ -96,7 +101,7 @@ class Login extends Component {
 									type="submit"
 									className="btn btn-large waves-effect waves-light hoverable blue accent-3"
 								>
-									Login
+									Add Product
 								</button>
 							</div>
 						</form>
@@ -106,4 +111,5 @@ class Login extends Component {
 		);
 	}
 }
-export default Login;
+
+export default AddProduct;

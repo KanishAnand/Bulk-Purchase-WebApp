@@ -1,1 +1,8 @@
 1.make both frontend and backend run from same command using concurently
+2. any link should not open without login   https://stackoverflow.com/questions/40055439/check-if-logged-in-react-router-app-es6
+3. links of navbar are not working
+4. register is not working due to user type
+5. add 404 page
+6. print alert from wrong add product and register error
+7. active in navbar
+8. try after clearing local storage

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import Select from "react-select";
 import axios from "axios";
 
 class Register extends Component {
@@ -10,25 +11,47 @@ class Register extends Component {
 			email: "",
 			password: "",
 			password2: "",
-			errors: {}
+			usertype: "",
+			errors: {},
+			selectedOption: ""
 		};
+		this.usertype = [
+			{ label: "Customer", value: "Customer" },
+			{ label: "Vendor", value: "Vendor" }
+		];
 	}
 	onChange = e => {
 		this.setState({ [e.target.id]: e.target.value });
 	};
 	onSubmit = e => {
 		e.preventDefault();
+		// this.usertype = this.state.selectedOption.value;
 		const newUser = {
 			name: this.state.name,
 			email: this.state.email,
 			password: this.state.password,
-			password2: this.state.password2
+			password2: this.state.password2,
+			usertype: this.state.selectedOption.value
 		};
 		console.log(newUser);
-		axios.post("users/register", newUser).then(res => res.status);
+		axios
+			.post("users/register", newUser)
+			.then(function(res) {
+				alert("Registered Successfully");
+				window.location.reload();
+			})
+			.catch(function(res) {
+				alert(res.response.data[Object.keys(res.response.data)[0]]);
+			});
+	};
+
+	handleChange = selectedOption => {
+		this.setState({ selectedOption });
+		console.log(`Option selected:`, selectedOption);
 	};
 	render() {
 		const { errors } = this.state;
+		const { selectedOption } = this.state;
 		return (
 			<div className="container">
 				<div className="row">
@@ -93,6 +116,18 @@ class Register extends Component {
 								<label htmlFor="password2">
 									Confirm Password
 								</label>
+							</div>
+							<div
+								className="input-field col s12"
+								style={{ marginBottom: "100px" }}
+							>
+								<Select
+									id="usertype"
+									placeholder="UserType"
+									value={selectedOption}
+									onChange={this.handleChange}
+									options={this.usertype}
+								/>
 							</div>
 							<div
 								className="col s12"

@@ -10,6 +10,20 @@ const keys = require("../config/keys");
 // Load User model
 const User = require("../models/User");
 
+// @route GET users
+// @desc get all users
+// @access Public
+// router.get("/hji", (req, res) => {
+// 	return "HELLO";
+// 	// User.find(function(err, users) {
+// 	// 	if (err) {
+// 	// 		console.log(err);
+// 	// 	} else {
+// 	// 		res.json(users);
+// 	// 	}
+// 	// });
+// });
+
 // @route POST api/users/register
 // @desc Register user
 // @access Public
@@ -28,7 +42,8 @@ router.post("/register", (req, res) => {
 			const newUser = new User({
 				name: req.body.name,
 				email: req.body.email,
-				password: req.body.password
+				password: req.body.password,
+				usertype: req.body.usertype
 			});
 			// Hash password before saving in database
 			bcrypt.genSalt(10, (err, salt) => {
@@ -38,7 +53,7 @@ router.post("/register", (req, res) => {
 					newUser
 						.save()
 						.then(user => res.json(user))
-						.catch(err => console.log(err));
+						.catch(err => res.send(err));
 				});
 			});
 		}
@@ -61,7 +76,10 @@ router.post("/login", (req, res) => {
 	User.findOne({ email }).then(user => {
 		// Check if user exists
 		if (!user) {
-			return res.status(404).json({ emailnotfound: "Email not found" });
+			return res.status(404).json({
+				error: "Email not found",
+				emailnotfound: "Email not found"
+			});
 		}
 		// Check password
 		bcrypt.compare(password, user.password).then(isMatch => {
@@ -82,14 +100,16 @@ router.post("/login", (req, res) => {
 					(err, token) => {
 						res.json({
 							success: true,
-							token: "Bearer " + token
+							token: "Bearer " + token,
+							user: user
 						});
 					}
 				);
 			} else {
-				return res
-					.status(400)
-					.json({ passwordincorrect: "Password incorrect" });
+				return res.status(400).json({
+					error: "Password Incorrect",
+					passwordincorrect: "Password incorrect"
+				});
 			}
 		});
 	});
