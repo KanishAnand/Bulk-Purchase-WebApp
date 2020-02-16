@@ -24,7 +24,7 @@ router.post("/create", (req, res) => {
 
 		newProduct
 			.save()
-			.then(user => res.json(newProduct))
+			.then(newProduct => res.json(newProduct))
 			.catch(err => {
 				return res.status(400).json(err);
 			});
@@ -35,7 +35,6 @@ router.post("/create", (req, res) => {
 // @desc view all products
 // @access Public
 router.post("/view", (req, res) => {
-	// var MongoClient = require("../config/keys").mongoURI;
 	var url = "mongodb://localhost:27017/test";
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
@@ -52,4 +51,44 @@ router.post("/view", (req, res) => {
 			});
 	});
 });
+
+// @route POST /product/view
+// @desc view all products
+// @access Public
+router.post("/edit", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var name = req.body.name;
+		var quantity = req.body.quantity;
+		var order_quantity = req.body.order_quantity;
+		var vendorid = req.body.vendorid;
+		var query = { name: name, vendormail: vendorid };
+		var set = { $set: { quantity: quantity - order_quantity } };
+		dbo.collection("products").updateOne(query, set, function(err, result) {
+			if (err) throw err;
+			console.log("23");
+			db.close();
+		});
+	});
+
+	const order = require("../models/orders");
+	const newOrder = new order({
+		name: req.body.name,
+		price: req.body.price,
+		quantity: req.body.order_quantity,
+		usermail: req.body.usermail,
+		vendormail: req.body.vendorid
+	});
+	console.log(newOrder);
+
+	newOrder
+		.save()
+		.then(newProduct => res.json(newProduct))
+		.catch(err => {
+			return res.status(400).json(err);
+		});
+});
+
 module.exports = router;
