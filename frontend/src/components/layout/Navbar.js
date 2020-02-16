@@ -3,6 +3,12 @@ import { Link } from "react-router-dom";
 import ls from "local-storage";
 
 class Navbar extends Component {
+	constructor() {
+		super();
+		this.state = {
+			search: ""
+		};
+	}
 	handleClick(event) {
 		event.preventDefault();
 		ls.set("auth", "false");
@@ -10,6 +16,16 @@ class Navbar extends Component {
 		ls.set("email", "");
 		window.location = "/";
 	}
+
+	onSubmit = e => {
+		event.preventDefault();
+		ls.set("search", this.state.search);
+		window.location = "/searchresult";
+	};
+
+	onChange = e => {
+		this.setState({ [e.target.id]: e.target.value });
+	};
 	render() {
 		return (
 			<nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -52,10 +68,29 @@ class Navbar extends Component {
 							</li>
 						) : null}
 					</ul>
-
-					{ls.get("auth") === "true" ? (
-						<ul className="navbar-nav navbar-right">
-							<li>Hello {ls.get("username")} !</li>
+					{ls.get("usertype") === "Customer" ? (
+						<ul>
+							<form
+								className="form-inline my-2 my-lg-0"
+								onSubmit={this.onSubmit}
+							>
+								<input
+									style={{ width: 300 }}
+									className="form-control mr-sm-2"
+									type="search"
+									placeholder="Search Products"
+									onChange={this.onChange}
+									value={this.state.search}
+									id="search"
+									aria-label="Search"
+								></input>
+								<button
+									className="btn btn-outline-success my-2 my-sm-0"
+									type="submit"
+								>
+									Search
+								</button>
+							</form>
 						</ul>
 					) : null}
 				</div>

@@ -31,17 +31,17 @@ router.post("/create", (req, res) => {
 	}
 });
 
-// @route GET /product/view
+// @route POST /product/view
 // @desc view all products
 // @access Public
-router.get("/view", (req, res) => {
+router.post("/view", (req, res) => {
 	// var MongoClient = require("../config/keys").mongoURI;
-	const mail = ls.get("email");
 	var url = "mongodb://localhost:27017/test";
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
 		var dbo = db.db("test");
-		var query = { vendormail: "login@gmail.com" };
+		var mail = req.body["mail"];
+		var query = { vendormail: mail };
 		dbo.collection("products")
 			.find(query)
 			.toArray(function(err, result) {

@@ -11,6 +11,7 @@ import Login from "./components/auth/Login";
 import Welcome from "./components/Welcome";
 import AddProduct from "./components/product/AddProduct";
 import ViewProduct from "./components/product/ViewProduct";
+import SearchResult from "./components/search/Result";
 
 // class App
 class App extends Component {
@@ -28,6 +29,11 @@ class App extends Component {
 					<Route exact path="/login" component={Login} />
 					<Route exact path="/addproduct" component={AddProduct} />
 					<Route exact path="/viewproducts" component={ViewProduct} />
+					<Route
+						exact
+						path="/searchresult"
+						component={SearchResult}
+					/>
 				</div>
 			</Router>
 		);

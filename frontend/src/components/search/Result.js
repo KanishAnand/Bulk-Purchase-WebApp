@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import axios from "axios";
 import ls from "local-storage";
+import axios from "axios";
 
-class AddProduct extends Component {
+class SearchResult extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -11,10 +11,11 @@ class AddProduct extends Component {
 	}
 	// const response;
 	componentDidMount() {
-		const data = { mail: ls.get("email") };
+		const data = { search: ls.get("search") };
 		axios
-			.post("product/view", data)
+			.post("/searchresult", data)
 			.then(res => {
+				console.log(res.data);
 				this.setState({ response: res.data });
 			})
 			.catch(function(res) {
@@ -28,16 +29,19 @@ class AddProduct extends Component {
 		let heading = [
 			<td key={i++}>Product Name</td>,
 			<td key={i++}>Price</td>,
-			<td key={i++}>Quantity</td>
+			<td key={i++}>Quantity</td>,
+			<td key={i++}>VendorId</td>
 		];
+
 		table.push(<tr key={i++}>{heading}</tr>);
 		for (const response of this.state.response) {
 			let children = [];
-			const { name, price, quantity } = response;
+			const { name, price, quantity, vendormail } = response;
 
 			children.push(<td key={i++}>{name}</td>);
 			children.push(<td key={i++}>{price}</td>);
 			children.push(<td key={i++}>{quantity}</td>);
+			children.push(<td key={i++}>{vendormail}</td>);
 			table.push(<tr key={i++}>{children}</tr>);
 			i++;
 		}
@@ -53,5 +57,4 @@ class AddProduct extends Component {
 		);
 	}
 }
-
-export default AddProduct;
+export default SearchResult;
