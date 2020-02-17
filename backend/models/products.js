@@ -17,6 +17,11 @@ const ProductSchema = new Schema({
 	vendormail: {
 		type: String,
 		required: true
+	},
+	status: {
+		type: String,
+		required: true,
+		default: "Waiting"
 	}
 });
 module.exports = products = mongoose.model("product", ProductSchema);

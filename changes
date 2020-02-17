@@ -7,3 +7,8 @@
 7. active in navbar
 8. try after clearing local storage
 9. order by a user of same thing and same vendor should add up
+10 . price value is of bundle or single units
+11. make price and quantity ordred always greater than 0
+12. navbar active
+13. for me product name + vendor mail id is a unique key
+14. error handlings

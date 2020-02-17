@@ -67,4 +67,25 @@ router.post("/sortbyquantity", (req, res) => {
 	});
 });
 
+// @route POST /searchresult/myorders
+// @desc view all products  of search result sorted
+// @access Public
+router.post("/myorders", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var mail = req.body["email"];
+		var query = { usermail: mail };
+		dbo.collection("orders")
+			.find(query)
+			.toArray(function(err, result) {
+				if (err) throw err;
+				// console.log(result);
+				res.send(result);
+				db.close();
+			});
+	});
+});
+
 module.exports = router;

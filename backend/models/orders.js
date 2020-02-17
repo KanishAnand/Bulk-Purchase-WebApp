@@ -21,6 +21,11 @@ const OrdersSchema = new Schema({
 	usermail: {
 		type: String,
 		required: true
+	},
+	status: {
+		type: String,
+		required: true,
+		default: "Waiting"
 	}
 });
 module.exports = orders = mongoose.model("orders", OrdersSchema);

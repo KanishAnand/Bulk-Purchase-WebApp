@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import axios from "axios";
 import ls from "local-storage";
 
-class ViewProduct extends Component {
+class DispatchProduct extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -13,7 +13,7 @@ class ViewProduct extends Component {
 	componentDidMount() {
 		const data = { mail: ls.get("email") };
 		axios
-			.post("product/view", data)
+			.post("product/dispatch", data)
 			.then(res => {
 				this.setState({ response: res.data });
 			})
@@ -25,15 +25,15 @@ class ViewProduct extends Component {
 	onSubmit = arg => e => {
 		e.preventDefault();
 		const orderdata = {
-			name: document.getElementById(arg - 3).innerHTML,
+			name: document.getElementById(arg - 2).innerHTML,
 			mail: ls.get("email")
 		};
 		console.log(orderdata);
 		axios
-			.post("/product/cancel", orderdata)
+			.post("/product/dispatched", orderdata)
 			.then(res => {
 				console.log(res);
-				alert("Order Cancelled Successfuly");
+				alert("Order Dispatched Successfuly");
 				window.location.reload();
 			})
 			.catch(function(res) {
@@ -47,12 +47,12 @@ class ViewProduct extends Component {
 		let heading = [
 			<td key={i++}>Product Name</td>,
 			<td key={i++}>Price</td>,
-			<td key={i++}>Quantity Remaining</td>
+			<td key={i++}>Dispatch</td>
 		];
 		table.push(<tr key={i++}>{heading}</tr>);
 		for (const response of this.state.response) {
 			let children = [];
-			const { name, price, quantity } = response;
+			const { name, price } = response;
 
 			children.push(
 				<td id={i} key={i++}>
@@ -66,17 +66,12 @@ class ViewProduct extends Component {
 			);
 			children.push(
 				<td id={i} key={i++}>
-					{quantity}
-				</td>
-			);
-			children.push(
-				<td id={i} key={i++}>
 					<form onSubmit={this.onSubmit(i - 1)}>
 						<button
 							className="btn btn-outline-success my-2 my-sm-0"
 							type="submit"
 						>
-							Cancel
+							Dispatch
 						</button>
 					</form>
 				</td>
@@ -97,4 +92,4 @@ class ViewProduct extends Component {
 	}
 }
 
-export default ViewProduct;
+export default DispatchProduct;

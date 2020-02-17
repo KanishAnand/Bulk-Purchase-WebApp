@@ -40,7 +40,7 @@ router.post("/view", (req, res) => {
 		if (err) throw err;
 		var dbo = db.db("test");
 		var mail = req.body["mail"];
-		var query = { vendormail: mail };
+		var query = { vendormail: mail, status: "Waiting" };
 		dbo.collection("products")
 			.find(query)
 			.toArray(function(err, result) {
@@ -61,14 +61,19 @@ router.post("/edit", (req, res) => {
 		if (err) throw err;
 		var dbo = db.db("test");
 		var name = req.body.name;
-		var quantity = req.body.quantity;
-		var order_quantity = req.body.order_quantity;
+		var quantity = parseInt(req.body.quantity);
+		var order_quantity = parseInt(req.body.order_quantity);
 		var vendorid = req.body.vendorid;
 		var query = { name: name, vendormail: vendorid };
-		var set = { $set: { quantity: quantity - order_quantity } };
+		if (quantity - order_quantity == 0) {
+			var set = {
+				$set: { quantity: quantity - order_quantity, status: "Placed" }
+			};
+		} else {
+			var set = { $set: { quantity: quantity - order_quantity } };
+		}
 		dbo.collection("products").updateOne(query, set, function(err, result) {
 			if (err) throw err;
-			console.log("23");
 			db.close();
 		});
 	});
@@ -81,6 +86,7 @@ router.post("/edit", (req, res) => {
 		usermail: req.body.usermail,
 		vendormail: req.body.vendorid
 	});
+
 	console.log(newOrder);
 
 	newOrder
@@ -89,6 +95,141 @@ router.post("/edit", (req, res) => {
 		.catch(err => {
 			return res.status(400).json(err);
 		});
+
+	var quantity = parseInt(req.body.quantity);
+	var order_quantity = parseInt(req.body.order_quantity);
+	if (quantity - order_quantity == 0) {
+		var url = "mongodb://localhost:27017/test";
+		MongoClient.connect(url, function(err, db) {
+			if (err) throw err;
+			var dbo = db.db("test");
+			var name = req.body.name;
+			var vendorid = req.body.vendorid;
+			var query = { name: name, vendormail: vendorid };
+			var set = { $set: { status: "Placed" } };
+			dbo.collection("products").updateMany(query, set, function(
+				err,
+				result
+			) {
+				if (err) throw err;
+				res.send(result);
+				db.close();
+			});
+		});
+	}
+});
+
+// @route POST /product/dispatch
+// @desc view all ready to dispatch products
+// @access Public
+router.post("/dispatch", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var mail = req.body["mail"];
+		var query = { vendormail: mail, status: "Placed" };
+		dbo.collection("products")
+			.find(query)
+			.toArray(function(err, result) {
+				if (err) throw err;
+				console.log(result);
+				res.send(result);
+				db.close();
+			});
+	});
+});
+
+// @route POST /product/dispatched
+// @desc dispatch products
+// @access Public
+router.post("/dispatched", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var name = req.body.name;
+		var vendorid = req.body.mail;
+		var query = { name: name, vendormail: vendorid };
+		var set = { $set: { status: "Dispatched" } };
+		dbo.collection("products").updateOne(query, set, function(err, result) {
+			if (err) throw err;
+			db.close();
+		});
+	});
+
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var name = req.body.name;
+		var vendorid = req.body.mail;
+		var query = { name: name, vendormail: vendorid };
+		var set = { $set: { status: "Dispatched" } };
+		dbo.collection("orders").updateMany(query, set, function(err, result) {
+			if (err) throw err;
+			res.send(result);
+			db.close();
+		});
+	});
+});
+
+// @route POST /product/dispatchedproducts
+// @desc dispatch products
+// @access Public
+router.post("/dispatchedproducts", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var mail = req.body["mail"];
+		var query = { vendormail: mail, status: "Dispatched" };
+		dbo.collection("products")
+			.find(query)
+			.toArray(function(err, result) {
+				if (err) throw err;
+				res.send(result);
+				db.close();
+			});
+	});
+});
+
+// @route POST /product/cancel
+// @desc cancel product
+// @access Public
+router.post("/cancel", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var name = req.body.name;
+		var vendorid = req.body.mail;
+		var query = { name: name, vendormail: vendorid };
+		var set = { $set: { status: "Cancelled" } };
+		dbo.collection("products").updateMany(query, set, function(
+			err,
+			result
+		) {
+			if (err) throw err;
+			// res.send(result);
+			db.close();
+		});
+	});
+
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var name = req.body.name;
+		var vendorid = req.body.mail;
+		var query = { name: name, vendormail: vendorid };
+		var set = { $set: { status: "Cancelled" } };
+		dbo.collection("orders").updateMany(query, set, function(err, result) {
+			if (err) throw err;
+			res.send(result);
+			db.close();
+		});
+	});
 });
 
 module.exports = router;

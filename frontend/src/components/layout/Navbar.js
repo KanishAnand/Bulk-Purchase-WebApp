@@ -50,9 +50,23 @@ class Navbar extends Component {
 								</Link>
 							</li>
 						) : null}
+						{ls.get("usertype") === "Vendor" ? (
+							<li className="nav-item">
+								<Link className="nav-link" to="/dispatch">
+									Ready To Dispatch
+								</Link>
+							</li>
+						) : null}
+						{ls.get("usertype") === "Vendor" ? (
+							<li className="nav-item">
+								<Link className="nav-link" to="/dispatched">
+									Dispatched Products
+								</Link>
+							</li>
+						) : null}
 						{ls.get("usertype") === "Customer" ? (
 							<li className="nav-item">
-								<Link className="nav-link" to="/#">
+								<Link className="nav-link" to="/myorders">
 									My Orders
 								</Link>
 							</li>

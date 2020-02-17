@@ -12,6 +12,9 @@ import Welcome from "./components/Welcome";
 import AddProduct from "./components/product/AddProduct";
 import ViewProduct from "./components/product/ViewProduct";
 import SearchResult from "./components/search/Result";
+import MyOrders from "./components/MyOrders";
+import Dispatch from "./components/product/DispatchProduct";
+import Dispatched from "./components/product/Dispatched";
 
 // class App
 class App extends Component {
@@ -29,6 +32,9 @@ class App extends Component {
 					<Route exact path="/login" component={Login} />
 					<Route exact path="/addproduct" component={AddProduct} />
 					<Route exact path="/viewproducts" component={ViewProduct} />
+					<Route exact path="/myorders" component={MyOrders} />
+					<Route exact path="/dispatch" component={Dispatch} />
+					<Route exact path="/dispatched" component={Dispatched} />
 					<Route
 						exact
 						path="/searchresult"

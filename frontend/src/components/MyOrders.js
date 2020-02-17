@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import axios from "axios";
 import ls from "local-storage";
+import axios from "axios";
+// const Validator = require("validator");
 
-class ViewProduct extends Component {
+class MyOrders extends Component {
 	constructor() {
 		super();
 		this.state = {
@@ -11,10 +12,11 @@ class ViewProduct extends Component {
 	}
 	// const response;
 	componentDidMount() {
-		const data = { mail: ls.get("email") };
+		const data = { email: ls.get("email") };
 		axios
-			.post("product/view", data)
+			.post("/searchresult/myorders", data)
 			.then(res => {
+				console.log(res.data);
 				this.setState({ response: res.data });
 			})
 			.catch(function(res) {
@@ -22,37 +24,21 @@ class ViewProduct extends Component {
 			});
 	}
 
-	onSubmit = arg => e => {
-		e.preventDefault();
-		const orderdata = {
-			name: document.getElementById(arg - 3).innerHTML,
-			mail: ls.get("email")
-		};
-		console.log(orderdata);
-		axios
-			.post("/product/cancel", orderdata)
-			.then(res => {
-				console.log(res);
-				alert("Order Cancelled Successfuly");
-				window.location.reload();
-			})
-			.catch(function(res) {
-				// alert(res.response.data[Object.keys(res.response.data)[0]]);
-			});
-	};
-
 	createTable() {
 		let table = [];
 		let i = 0;
 		let heading = [
 			<td key={i++}>Product Name</td>,
 			<td key={i++}>Price</td>,
-			<td key={i++}>Quantity Remaining</td>
+			<td key={i++}>Quantity Ordered</td>,
+			<td key={i++}>VendorId</td>,
+			<td key={i++}>Order Status</td>
 		];
+
 		table.push(<tr key={i++}>{heading}</tr>);
 		for (const response of this.state.response) {
 			let children = [];
-			const { name, price, quantity } = response;
+			const { name, price, quantity, vendormail, status } = response;
 
 			children.push(
 				<td id={i} key={i++}>
@@ -71,14 +57,12 @@ class ViewProduct extends Component {
 			);
 			children.push(
 				<td id={i} key={i++}>
-					<form onSubmit={this.onSubmit(i - 1)}>
-						<button
-							className="btn btn-outline-success my-2 my-sm-0"
-							type="submit"
-						>
-							Cancel
-						</button>
-					</form>
+					{vendormail}
+				</td>
+			);
+			children.push(
+				<td id={i} key={i++}>
+					{status}
 				</td>
 			);
 			table.push(<tr key={i++}>{children}</tr>);
@@ -89,12 +73,14 @@ class ViewProduct extends Component {
 
 	render() {
 		const table = this.createTable();
+
 		return (
-			<table>
-				<tbody>{table}</tbody>
-			</table>
+			<div>
+				<table>
+					<tbody>{table}</tbody>
+				</table>
+			</div>
 		);
 	}
 }
-
-export default ViewProduct;
+export default MyOrders;
