@@ -17,12 +17,15 @@ class MyOrders extends Component {
 		axios
 			.post("/searchresult/myorders", data)
 			.then(res => {
-				console.log(res.data);
 				this.setState({ response: res.data });
 			})
 			.catch(function(res) {
 				// alert(res.response.data[Object.keys(res.response.data)[0]]);
 			});
+		// console.log(len(this.state.response));
+		// for (const obj of this.state.response) {
+		// 	obj = 0;
+		// }
 	}
 
 	createTable() {
@@ -33,13 +36,21 @@ class MyOrders extends Component {
 			<td key={i++}>Price</td>,
 			<td key={i++}>Quantity Ordered</td>,
 			<td key={i++}>VendorId</td>,
-			<td key={i++}>Order Status</td>
+			<td key={i++}>Order Status</td>,
+			<td key={i++}>Quantity Remaining for Dispatch</td>
 		];
 
 		table.push(<tr key={i++}>{heading}</tr>);
 		for (const response of this.state.response) {
 			let children = [];
-			const { name, price, quantity, vendormail, status } = response;
+			const {
+				name,
+				price,
+				quantity,
+				vendormail,
+				status,
+				remaining
+			} = response;
 
 			children.push(
 				<td id={i} key={i++}>
@@ -64,6 +75,11 @@ class MyOrders extends Component {
 			children.push(
 				<td id={i} key={i++}>
 					{status}
+				</td>
+			);
+			children.push(
+				<td id={i} key={i++}>
+					{remaining}
 				</td>
 			);
 			table.push(<tr key={i++}>{children}</tr>);

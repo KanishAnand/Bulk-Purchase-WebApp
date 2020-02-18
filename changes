@@ -19,5 +19,7 @@
 19. one user can rate only on time condition
 
 
-20. problem with edit request on ordering product
-21. fuzzy
+//20. problem with edit request on ordering product
+//21. fuzzy
+22. last quantity part
+23. sort by quantity & price working without fuzzy searching

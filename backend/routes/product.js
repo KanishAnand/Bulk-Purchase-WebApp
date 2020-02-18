@@ -64,58 +64,116 @@ router.post("/edit", (req, res) => {
 		usermail: req.body.usermail,
 		vendormail: req.body.vendorid
 	});
+	var url = "mongodb://localhost:27017/test";
 	newOrder
 		.save()
-		.then(newProduct => console.log(newProduct))
+		.then(
+			MongoClient.connect(url, function(err, db) {
+				if (err) throw err;
+				else {
+					var dbo = db.db("test");
+					var name = req.body.name;
+					var quantity = parseInt(req.body.quantity);
+					var order_quantity = parseInt(req.body.order_quantity);
+					var vendorid = req.body.vendorid;
+					var query = { name: name, vendormail: vendorid };
+					if (quantity - order_quantity == 0) {
+						var set = {
+							$set: {
+								quantity: quantity - order_quantity,
+								status: "Placed"
+							}
+						};
+					} else {
+						var set = {
+							$set: { quantity: quantity - order_quantity }
+						};
+					}
+					dbo.collection("products").updateOne(query, set, function(
+						err,
+						result
+					) {
+						if (err) throw err;
+						quantity = parseInt(req.body.quantity);
+						var order_quantity = parseInt(req.body.order_quantity);
+						if (quantity - order_quantity == 0) {
+							var url = "mongodb://localhost:27017/test";
+							MongoClient.connect(url, function(err, db) {
+								if (err) throw err;
+								var dbo = db.db("test");
+								var name = req.body.name;
+								var vendorid = req.body.vendorid;
+								var query = {
+									name: name,
+									vendormail: vendorid
+								};
+								var set = { $set: { status: "Placed" } };
+								dbo.collection("orders").updateMany(
+									query,
+									set,
+									function(err, result) {
+										if (err) throw err;
+										db.close();
+									}
+								);
+							});
+						}
+						res.send(result);
+						db.close();
+					});
+				}
+			})
+		)
 		.catch(err => {
+			console.log("error");
 			return res.status(400).json(err);
 		});
-	// console.log("HELO");
-	// console.log(newOrder);
-	var url = "mongodb://localhost:27017/test";
-	MongoClient.connect(url, function(err, db) {
-		if (err) throw err;
-		var dbo = db.db("test");
-		var name = req.body.name;
-		var quantity = parseInt(req.body.quantity);
-		var order_quantity = parseInt(req.body.order_quantity);
-		var vendorid = req.body.vendorid;
-		var query = { name: name, vendormail: vendorid };
-		if (quantity - order_quantity == 0) {
-			var set = {
-				$set: { quantity: quantity - order_quantity, status: "Placed" }
-			};
-		} else {
-			var set = { $set: { quantity: quantity - order_quantity } };
-		}
-		dbo.collection("products").updateOne(query, set, function(err, result) {
-			if (err) throw err;
-			console.log("OK");
-			db.close();
-		});
-	});
 
-	var quantity = parseInt(req.body.quantity);
-	var order_quantity = parseInt(req.body.order_quantity);
-	if (quantity - order_quantity == 0) {
-		var url = "mongodb://localhost:27017/test";
-		MongoClient.connect(url, function(err, db) {
-			if (err) throw err;
-			var dbo = db.db("test");
-			var name = req.body.name;
-			var vendorid = req.body.vendorid;
-			var query = { name: name, vendormail: vendorid };
-			var set = { $set: { status: "Placed" } };
-			dbo.collection("orders").updateMany(query, set, function(
-				err,
-				result
-			) {
-				if (err) throw err;
-				res.send(result);
-				db.close();
-			});
-		});
-	}
+	// // console.log(newOrder);
+	// var url = "mongodb://localhost:27017/test";
+	// MongoClient.connect(url, function(err, db) {
+	// 	if (err) throw err;
+	// 	var dbo = db.db("test");
+	// 	var name = req.body.name;
+	// 	var quantity = parseInt(req.body.quantity);
+	// 	var order_quantity = parseInt(req.body.order_quantity);
+	// 	var vendorid = req.body.vendorid;
+	// 	var query = { name: name, vendormail: vendorid };
+	// 	if (quantity - order_quantity == 0) {
+	// 		var set = {
+	// 			$set: { quantity: quantity - order_quantity, status: "Placed" }
+	// 		};
+	// 	} else {
+	// 		var set = { $set: { quantity: quantity - order_quantity } };
+	// 	}
+	// 	dbo.collection("products").updateOne(query, set, function(err, result) {
+	// 		if (err) throw err;
+	// 		console.log("OK");
+	// 		db.close();
+	// 	});
+	// });
+
+	// var quantity = parseInt(req.body.quantity);
+	// var order_quantity = parseInt(req.body.order_quantity);
+	// if (quantity - order_quantity == 0) {
+	// 	var url = "mongodb://localhost:27017/test";
+	// 	MongoClient.connect(url, function(err, db) {
+	// 		if (err) throw err;
+	// 		var dbo = db.db("test");
+	// 		var name = req.body.name;
+	// 		var vendorid = req.body.vendorid;
+	// 		var query = { name: name, vendormail: vendorid };
+	// 		var set = { $set: { status: "Placed" } };
+	// 		dbo.collection("orders").updateMany(query, set, function(
+	// 			err,
+	// 			result
+	// 		) {
+	// 			if (err) throw err;
+	// 			res.send(result);
+	// 			db.close();
+	// 		});
+	// 	});
+	// }
 });
 
 // @route POST /product/dispatch

@@ -6,29 +6,28 @@ var router = express.Router();
 // @desc view all products  of search result
 // @access Public
 router.post("/", (req, res) => {
-	var url = "mongodb://localhost:27017/test";
-	MongoClient.connect(url, function(err, db) {
-		if (err) throw err;
-		var dbo = db.db("test");
-		var search = req.body["search"];
-		var query = { name: search };
-		dbo.collection("products")
-			.find(query)
-			.toArray(function(err, result) {
-				if (err) throw err;
-				console.log(result);
-				res.send(result);
-				db.close();
-			});
-	});
-
-	// const Product = require("../models/products");
-	// var search = req.body["search"];
-	// console.log(search);
-
-	// Product.fuzzySearch("Pencil", function(err, resp) {
-	// 	console.log(resp);
+	// var url = "mongodb://localhost:27017/test";
+	// MongoClient.connect(url, function(err, db) {
+	// 	if (err) throw err;
+	// 	var dbo = db.db("test");
+	// 	var search = req.body["search"];
+	// 	var query = { name: search };
+	// 	dbo.collection("products")
+	// 		.find(query)
+	// 		.toArray(function(err, result) {
+	// 			if (err) throw err;
+	// 			console.log(result);
+	// 			res.send(result);
+	// 			db.close();
+	// 		});
 	// });
+
+	const Product = require("../models/products");
+	var search = req.body["search"];
+
+	Product.fuzzySearch(search, function(err, resp) {
+		res.send(resp);
+	});
 });
 
 // @route POST /searchresult
@@ -88,12 +87,71 @@ router.post("/myorders", (req, res) => {
 		dbo.collection("orders")
 			.find(query)
 			.toArray(function(err, result) {
-				if (err) throw err;
+				if (err) {
+					res.json(400).json(err);
+					return;
+				}
 				// console.log(result);
-				res.send(result);
-				db.close();
+				else {
+					final_result = [];
+					let i = 0;
+					// console.log(result.length);
+					for (let resp of result) {
+						// obj = resp;
+						MongoClient.connect(url, function(err, db) {
+							if (err) throw err;
+							var dbo = db.db("test");
+							var query = {
+								name: resp.name,
+								vendormail: resp.vendormail
+							};
+							dbo.collection("products")
+								.find(query)
+								.toArray(function(err, result2) {
+									if (err) {
+										console.log("EROR");
+										res.json(400).json(err);
+										return;
+									}
+									resp["remaining"] = result2[0].quantity;
+									final_result.push(resp);
+									if (i === result.length - 1) {
+										res.send(final_result);
+									}
+									i++;
+									db.close();
+								});
+						});
+					}
+					db.close();
+				}
 			});
 	});
 });
+// router.post("/myorders", (req, res) => {
+// 	var url = "mongodb://localhost:27017/test";
+// 	MongoClient.connect(url, function(err, db) {
+// 		if (err) throw err;
+// 		var dbo = db.db("test");
+// 		var mail = req.body["email"];
+// 		var query = { usermail: mail };
+// 		dbo.collection("orders")
+// 			.aggregate([
+// 				{
+// 					$lookup: {
+// 						from: "products",
+// 						localField: "vendormail",
+// 						foreignField: "vendormail",
+// 						$match: { usermail: mail },
+// 						as: "join"
+// 					}
+// 				}
+// 			])
+// 			.toArray(function(err, res) {
+// 				console.log(res);
+// 				db.close();
+// 			});
+// 	});
+// });
 
 module.exports = router;
