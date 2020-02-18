@@ -56,6 +56,22 @@ router.post("/view", (req, res) => {
 // @desc view all products
 // @access Public
 router.post("/edit", (req, res) => {
+	const order = require("../models/orders");
+	const newOrder = new order({
+		name: req.body.name,
+		price: req.body.price,
+		quantity: req.body.order_quantity,
+		usermail: req.body.usermail,
+		vendormail: req.body.vendorid
+	});
+	newOrder
+		.save()
+		.then(newProduct => console.log(newProduct))
+		.catch(err => {
+			return res.status(400).json(err);
+		});
+	// console.log("HELO");
+	// console.log(newOrder);
 	var url = "mongodb://localhost:27017/test";
 	MongoClient.connect(url, function(err, db) {
 		if (err) throw err;
@@ -74,27 +90,10 @@ router.post("/edit", (req, res) => {
 		}
 		dbo.collection("products").updateOne(query, set, function(err, result) {
 			if (err) throw err;
+			console.log("OK");
 			db.close();
 		});
 	});
-
-	const order = require("../models/orders");
-	const newOrder = new order({
-		name: req.body.name,
-		price: req.body.price,
-		quantity: req.body.order_quantity,
-		usermail: req.body.usermail,
-		vendormail: req.body.vendorid
-	});
-
-	console.log(newOrder);
-
-	newOrder
-		.save()
-		.then(newProduct => res.json(newProduct))
-		.catch(err => {
-			return res.status(400).json(err);
-		});
 
 	var quantity = parseInt(req.body.quantity);
 	var order_quantity = parseInt(req.body.order_quantity);
@@ -107,7 +106,7 @@ router.post("/edit", (req, res) => {
 			var vendorid = req.body.vendorid;
 			var query = { name: name, vendormail: vendorid };
 			var set = { $set: { status: "Placed" } };
-			dbo.collection("products").updateMany(query, set, function(
+			dbo.collection("orders").updateMany(query, set, function(
 				err,
 				result
 			) {
@@ -225,6 +224,118 @@ router.post("/cancel", (req, res) => {
 		var query = { name: name, vendormail: vendorid };
 		var set = { $set: { status: "Cancelled" } };
 		dbo.collection("orders").updateMany(query, set, function(err, result) {
+			if (err) throw err;
+			res.send(result);
+			db.close();
+		});
+	});
+});
+
+// @route POST /product/rate
+// @desc dispatch products
+// @access Public
+router.post("/rate", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var mail = req.body["mail"];
+		var query = { usermail: mail, status: "Dispatched" };
+		dbo.collection("orders")
+			.find(query)
+			.toArray(function(err, result) {
+				if (err) throw err;
+				res.send(result);
+				db.close();
+			});
+	});
+});
+
+router.post("/rateit", (req, res) => {
+	console.log("hiowefo");
+	const rate = require("../models/ratings");
+	const newRate = new rate({
+		name: req.body.name,
+		rating: req.body.rating,
+		review: req.body.review,
+		usermail: req.body.usermail,
+		vendormail: req.body.vendormail
+	});
+
+	console.log(newRate);
+
+	newRate
+		.save()
+		.then(newRate => res.send(newRate))
+		.catch(err => {
+			return res.status(400).json(err);
+		});
+});
+
+router.post("/seerating", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var mail = req.body["mail"];
+		var query = { vendormail: mail };
+		dbo.collection("ratings")
+			.find(query)
+			.toArray(function(err, result) {
+				if (err) throw err;
+				res.send(result);
+				db.close();
+			});
+	});
+});
+
+router.post("/vendoreviews", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var mail = req.body["vendormail"];
+		var query = { vendormail: mail };
+		dbo.collection("ratings")
+			.find(query)
+			.toArray(function(err, result) {
+				if (err) throw err;
+				res.send(result);
+				db.close();
+			});
+	});
+});
+
+router.post("/placedproducts", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var mail = req.body["email"];
+		var query = { usermail: mail, status: "Placed" };
+		dbo.collection("orders")
+			.find(query)
+			.toArray(function(err, result) {
+				if (err) throw err;
+				res.send(result);
+				db.close();
+			});
+	});
+});
+
+router.post("/vendorating", (req, res) => {
+	var url = "mongodb://localhost:27017/test";
+	MongoClient.connect(url, function(err, db) {
+		if (err) throw err;
+		var dbo = db.db("test");
+		var vendormail = req.body["vendormail"];
+		var rating = req.body["rating"];
+		var query = { vendormail: vendormail };
+		var set = { $inc: { vendorating: parseInt(rating), ratecount: 1 } };
+		dbo.collection("products").updateMany(query, set, function(
+			err,
+			result
+		) {
 			if (err) throw err;
 			res.send(result);
 			db.close();

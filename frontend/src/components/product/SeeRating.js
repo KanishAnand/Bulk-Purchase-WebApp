@@ -1,23 +1,22 @@
 import React, { Component } from "react";
-import ls from "local-storage";
 import axios from "axios";
-// const Validator = require("validator");
+import ls from "local-storage";
+const Validator = require("validator");
+const isEmpty = require("is-empty");
 
-class MyOrders extends Component {
+class Rate extends Component {
 	constructor() {
 		super();
 		this.state = {
-			response: [],
-			quantity: []
+			response: []
 		};
 	}
 	// const response;
 	componentDidMount() {
-		const data = { email: ls.get("email") };
+		const data = { mail: ls.get("email") };
 		axios
-			.post("/searchresult/myorders", data)
+			.post("product/seerating", data)
 			.then(res => {
-				console.log(res.data);
 				this.setState({ response: res.data });
 			})
 			.catch(function(res) {
@@ -30,16 +29,14 @@ class MyOrders extends Component {
 		let i = 0;
 		let heading = [
 			<td key={i++}>Product Name</td>,
-			<td key={i++}>Price</td>,
-			<td key={i++}>Quantity Ordered</td>,
-			<td key={i++}>VendorId</td>,
-			<td key={i++}>Order Status</td>
+			<td key={i++}>User Id</td>,
+			<td key={i++}>Rating</td>,
+			<td key={i++}>Reviews</td>
 		];
-
 		table.push(<tr key={i++}>{heading}</tr>);
 		for (const response of this.state.response) {
 			let children = [];
-			const { name, price, quantity, vendormail, status } = response;
+			const { name, usermail, rating, review } = response;
 
 			children.push(
 				<td id={i} key={i++}>
@@ -48,22 +45,17 @@ class MyOrders extends Component {
 			);
 			children.push(
 				<td id={i} key={i++}>
-					{price}
+					{usermail}
 				</td>
 			);
 			children.push(
 				<td id={i} key={i++}>
-					{quantity}
+					{rating}
 				</td>
 			);
 			children.push(
 				<td id={i} key={i++}>
-					{vendormail}
-				</td>
-			);
-			children.push(
-				<td id={i} key={i++}>
-					{status}
+					{review}
 				</td>
 			);
 			table.push(<tr key={i++}>{children}</tr>);
@@ -74,14 +66,12 @@ class MyOrders extends Component {
 
 	render() {
 		const table = this.createTable();
-
 		return (
-			<div>
-				<table>
-					<tbody>{table}</tbody>
-				</table>
-			</div>
+			<table>
+				<tbody>{table}</tbody>
+			</table>
 		);
 	}
 }
-export default MyOrders;
+
+export default Rate;

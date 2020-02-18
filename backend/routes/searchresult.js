@@ -21,6 +21,14 @@ router.post("/", (req, res) => {
 				db.close();
 			});
 	});
+
+	// const Product = require("../models/products");
+	// var search = req.body["search"];
+	// console.log(search);
+
+	// Product.fuzzySearch("Pencil", function(err, resp) {
+	// 	console.log(resp);
+	// });
 });
 
 // @route POST /searchresult

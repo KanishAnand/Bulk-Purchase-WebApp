@@ -12,3 +12,12 @@
 12. navbar active
 13. for me product name + vendor mail id is a unique key
 14. error handlings
+15. price 
+16. in search result only show products with status waiting
+17. user can rate product only once
+18. search result should show products with non zero quantity
+19. one user can rate only on time condition
+
+
+20. problem with edit request on ordering product
+21. fuzzy

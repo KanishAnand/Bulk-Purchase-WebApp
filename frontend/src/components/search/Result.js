@@ -56,9 +56,15 @@ class SearchResult extends Component {
 			});
 	};
 
+	onSubmitreview = arg => e => {
+		e.preventDefault();
+		const data = { vendormail: document.getElementById(arg - 3).innerHTML };
+		ls.set("vendormail", data.vendormail);
+		window.location = "/vendoreviews";
+	};
+
 	onSubmitorder = arg => event => {
 		event.preventDefault();
-		console.log(arg);
 		// console.log(document.getElementById(arg - 1).value);
 		const orderdata = {
 			name: document.getElementById(arg - 5).innerHTML,
@@ -82,7 +88,7 @@ class SearchResult extends Component {
 			window.location.reload();
 			return;
 		}
-		console.log(orderdata);
+
 		axios
 			.post("/product/edit", orderdata)
 			.then(res => {
@@ -91,6 +97,7 @@ class SearchResult extends Component {
 				window.location.reload();
 			})
 			.catch(function(res) {
+				console.log("DF");
 				// alert(res.response.data[Object.keys(res.response.data)[0]]);
 			});
 	};
@@ -104,13 +111,22 @@ class SearchResult extends Component {
 			<td key={i++}>Quantity</td>,
 			<td key={i++}>VendorId</td>,
 			<td key={i++}>Quantity to Order</td>,
-			<td key={i++}>Order</td>
+			<td key={i++}>Order</td>,
+			<td key={i++}>Vendor Reviews</td>,
+			<td key={i++}>Average Vendor Rating</td>
 		];
 
 		table.push(<tr key={i++}>{heading}</tr>);
 		for (const response of this.state.response) {
 			let children = [];
-			const { name, price, quantity, vendormail } = response;
+			const {
+				name,
+				price,
+				quantity,
+				vendormail,
+				vendorating,
+				ratecount
+			} = response;
 
 			children.push(
 				<td id={i} key={i++}>
@@ -156,6 +172,23 @@ class SearchResult extends Component {
 							Order
 						</button>
 					</form>
+				</td>
+			);
+			children.push(
+				<td id={i} key={i++}>
+					<form onSubmit={this.onSubmitreview(i - 1)}>
+						<button
+							className="btn btn-outline-success my-2 my-sm-0"
+							type="submit"
+						>
+							Reviews
+						</button>
+					</form>
+				</td>
+			);
+			children.push(
+				<td id={i} key={i++}>
+					{vendorating / ratecount}
 				</td>
 			);
 			table.push(<tr key={i++}>{children}</tr>);

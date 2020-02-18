@@ -1,21 +1,20 @@
 import React, { Component } from "react";
 import ls from "local-storage";
 import axios from "axios";
-// const Validator = require("validator");
+const Validator = require("validator");
 
-class MyOrders extends Component {
+class SearchResult extends Component {
 	constructor() {
 		super();
 		this.state = {
-			response: [],
-			quantity: []
+			response: []
 		};
 	}
 	// const response;
 	componentDidMount() {
-		const data = { email: ls.get("email") };
+		const data = { vendormail: ls.get("vendormail") };
 		axios
-			.post("/searchresult/myorders", data)
+			.post("/product/vendoreviews", data)
 			.then(res => {
 				console.log(res.data);
 				this.setState({ response: res.data });
@@ -28,42 +27,16 @@ class MyOrders extends Component {
 	createTable() {
 		let table = [];
 		let i = 0;
-		let heading = [
-			<td key={i++}>Product Name</td>,
-			<td key={i++}>Price</td>,
-			<td key={i++}>Quantity Ordered</td>,
-			<td key={i++}>VendorId</td>,
-			<td key={i++}>Order Status</td>
-		];
+		let heading = [<td key={i++}>Vendor Reviews</td>];
 
 		table.push(<tr key={i++}>{heading}</tr>);
 		for (const response of this.state.response) {
 			let children = [];
-			const { name, price, quantity, vendormail, status } = response;
+			const { review } = response;
 
 			children.push(
 				<td id={i} key={i++}>
-					{name}
-				</td>
-			);
-			children.push(
-				<td id={i} key={i++}>
-					{price}
-				</td>
-			);
-			children.push(
-				<td id={i} key={i++}>
-					{quantity}
-				</td>
-			);
-			children.push(
-				<td id={i} key={i++}>
-					{vendormail}
-				</td>
-			);
-			children.push(
-				<td id={i} key={i++}>
-					{status}
+					{review}
 				</td>
 			);
 			table.push(<tr key={i++}>{children}</tr>);
@@ -84,4 +57,4 @@ class MyOrders extends Component {
 		);
 	}
 }
-export default MyOrders;
+export default SearchResult;
