@@ -17,12 +17,16 @@ module.exports = function validateProductInput(data) {
 		errors.price = "Price field is required";
 	} else if (!Validator.isInt(data.price)) {
 		errors.price = "Price is invalid";
+	} else if (data.price <= 0 || data.price > 1000000) {
+		errors.price = "Price should be non zero integer below 1000000";
 	}
 	// Quantity checks
 	if (Validator.isEmpty(data.quantity)) {
 		errors.quantity = "Quantity field is required";
 	} else if (!Validator.isInt(data.quantity)) {
 		errors.quantity = "Quantity is invalid";
+	} else if (data.quantity <= 0) {
+		errors.quantity = "Quantity should be non zero integer";
 	}
 
 	return {

@@ -19,6 +19,10 @@ const ProductSchema = new Schema({
 		type: String,
 		required: true
 	},
+	image: {
+		data: Buffer,
+		type: String
+	},
 	vendorating: {
 		type: Number,
 		required: true,

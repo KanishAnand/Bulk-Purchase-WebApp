@@ -106,6 +106,7 @@ class SearchResult extends Component {
 		let table = [];
 		let i = 0;
 		let heading = [
+			<td key={i++}>Product Image</td>,
 			<td key={i++}>Product Name</td>,
 			<td key={i++}>Price</td>,
 			<td key={i++}>Quantity</td>,
@@ -125,9 +126,20 @@ class SearchResult extends Component {
 				quantity,
 				vendormail,
 				vendorating,
-				ratecount
+				ratecount,
+				image
 			} = response;
 
+			let imageData = image;
+
+			if (Array.isArray(imageData))
+				imageData = imageData.map(x => String.fromCharCode(x)).join("");
+
+			children.push(
+				<td className="image" id={i} key={i++}>
+					<img src={imageData} />
+				</td>
+			);
 			children.push(
 				<td id={i} key={i++}>
 					{name}
@@ -188,7 +200,9 @@ class SearchResult extends Component {
 			);
 			children.push(
 				<td id={i} key={i++}>
-					{vendorating / ratecount}
+					{(vendorating / ratecount).toFixed(2) === "NaN"
+						? 0
+						: (vendorating / ratecount).toFixed(2)}
 				</td>
 			);
 			table.push(<tr key={i++}>{children}</tr>);

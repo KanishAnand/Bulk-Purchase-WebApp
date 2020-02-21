@@ -11,18 +11,29 @@ class AddProduct extends Component {
 			price: "",
 			quantity: "",
 			vendormail: "",
+			image: "",
 			errors: {}
 		};
 	}
 	onChange = e => {
 		this.setState({ [e.target.id]: e.target.value });
 	};
+
+	onChangeim = e => {
+		const fr = new FileReader();
+		fr.onload = function() {
+			this.setState({ image: fr.result });
+		}.bind(this);
+		fr.readAsDataURL(e.target.files[0]);
+	};
+
 	onSubmit = e => {
 		e.preventDefault();
 		const newProduct = {
 			name: this.state.name,
 			price: this.state.price,
 			quantity: this.state.quantity,
+			image: this.state.image,
 			vendormail: ls.get("email")
 		};
 		console.log(newProduct);
@@ -36,6 +47,7 @@ class AddProduct extends Component {
 				alert(res.response.data[Object.keys(res.response.data)[0]]);
 			});
 	};
+
 	render() {
 		const { errors } = this.state;
 		return (
@@ -86,6 +98,18 @@ class AddProduct extends Component {
 									type="text"
 								/>
 								<label htmlFor="quantity">Quantity</label>
+							</div>
+							<div className="input-field col s12">
+								<label for="image">Select Product Image:</label>
+								<br></br>
+								<br></br>
+								<input
+									type="file"
+									onChange={this.onChangeim}
+									// value={this.state.image}
+									id="image"
+									name="image"
+								></input>
 							</div>
 							<div
 								className="col s12"

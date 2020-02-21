@@ -19,12 +19,12 @@ router.post("/create", (req, res) => {
 			name: req.body.name,
 			price: req.body.price,
 			quantity: req.body.quantity,
-			vendormail: req.body.vendormail
+			vendormail: req.body.vendormail,
+			image: req.body.image
 		});
-
 		newProduct
 			.save()
-			.then(newProduct => res.json(newProduct))
+			.then(newProduct => res.send(newProduct))
 			.catch(err => {
 				return res.status(400).json(err);
 			});
