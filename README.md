@@ -62,6 +62,3 @@ npm start
 ```
 
 ---
-
-_Coded by:_
-**Kanish Anand**
