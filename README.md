@@ -4,7 +4,7 @@
 
 -   Web application based on MERN stack - MongoDB, Express.js, React.js, and Node.js.
 
--   The app will has an option for sellers to host their products along with the minimum bulk dispatch quantity.
+-   The app will has an option for sellers to host their products along with the minimum bulk dispatch quantity and also upload images of product.
 
 -   Various customers can select from the listed products and order them with their own required quantity.
 
