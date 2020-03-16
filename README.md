@@ -1,4 +1,4 @@
-# Bulk-Purchase-App
+# Bulk-Purchase-WebApp
 
 ## About
 
@@ -12,7 +12,6 @@
 
 ## Requirements:
 
--   Python3
 -   Nodejs
 -   Reactjs
 -   Expressjs
