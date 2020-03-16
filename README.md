@@ -12,10 +12,10 @@
 
 ## Requirements:
 
--   Nodejs
--   Reactjs
--   Expressjs
--   MongoDb
+-   NodeJS
+-   ReactJS
+-   ExpressJS
+-   MongoDB
 
 ## Running the program
 
