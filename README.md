@@ -1,12 +1,7 @@
 # Bulk-Purchase-WebApp
 
 ## About
-This is a Web application based on MERN stack - MongoDB, Express.js, React.js, and Node.js. It is basically a webapp where users can buy and sell products in bulk quantities.
--   The app has an option for sellers to host their products along with the minimum bulk dispatch quantity, upload images of the product, cancel or dispatch products.
--   Customers can select from the listed products or search desired products and order them with their own required quantity.
--   Webapp support fuzzy searching, sorting results by price,quantity and rating.
-- Customer can see list of all their ordered products along with their current status.
-- Customer can rate vendors and products and also add their reviews.
+This is a Web application based on MERN stack - MongoDB, Express.js, React.js, and Node.js. It is basically a webapp where users can recruit and apply for jobs.
 
 ## Requirements:
 
